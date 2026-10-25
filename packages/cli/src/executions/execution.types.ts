@@ -1,0 +1,71 @@
+import type { SerializedCursor } from '@n8n/api-types';
+import type {
+	AuthenticatedRequest,
+	ExecutionSummaries,
+	ExecutionEntity,
+	IExecutionResponse,
+} from '@n8n/db';
+import type { AnnotationVote, ExecutionStatus, WorkflowExecuteMode } from 'n8n-workflow';
+
+import type { ExecutionCursor } from '@/executions/execution-cursor';
+
+export declare namespace ExecutionRequest {
+	namespace QueryParams {
+		type GetMany = {
+			cursor?: SerializedCursor;
+			filter: string; // stringified `FilterFields`
+			limit: string;
+		};
+	}
+
+	namespace BodyParams {
+		type StopMany = {
+			filter: ExecutionSummaries.StopExecutionFilterQuery; // stringified `FilterFields`
+		};
+	}
+
+	namespace RouteParams {
+		type ExecutionId = {
+			id: ExecutionEntity['id'];
+		};
+	}
+
+	type ExecutionUpdatePayload = {
+		tags?: string[];
+		vote?: AnnotationVote | null;
+	};
+
+	type GetMany = AuthenticatedRequest<{}, {}, {}, QueryParams.GetMany> & {
+		rangeQuery: ExecutionSummaries.RangeQuery; // parsed from query params
+		cursor?: ExecutionCursor;
+	};
+
+	type GetOne = AuthenticatedRequest<RouteParams.ExecutionId>;
+
+	type GetVersions = AuthenticatedRequest<{ workflowId: string }>;
+
+	type Retry = AuthenticatedRequest<RouteParams.ExecutionId, {}, { loadWorkflow?: boolean }, {}>;
+
+	type Stop = AuthenticatedRequest<RouteParams.ExecutionId>;
+	type StopMany = AuthenticatedRequest<{}, {}, BodyParams.StopMany>;
+
+	type Update = AuthenticatedRequest<RouteParams.ExecutionId, {}, ExecutionUpdatePayload, {}>;
+}
+
+/**
+ * The execution a retry started. The execution data fields are absent when the
+ * user may not read the workflow's executions.
+ */
+export type RetriedExecution = Omit<
+	IExecutionResponse,
+	'createdAt' | 'data' | 'workflowData' | 'customData' | 'annotation'
+> &
+	Partial<Pick<IExecutionResponse, 'data' | 'workflowData' | 'customData' | 'annotation'>>;
+
+export type StopResult = {
+	mode: WorkflowExecuteMode;
+	startedAt: Date;
+	stoppedAt?: Date;
+	finished: boolean;
+	status: ExecutionStatus;
+};
