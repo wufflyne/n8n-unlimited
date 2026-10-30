@@ -85,6 +85,14 @@ const copyDebugInfoToClipboard = async () => {
 				</ElRow>
 				<ElRow>
 					<ElCol :span="8" class="info-name">
+						<N8nText>Fork</N8nText>
+					</ElCol>
+					<ElCol :span="16">
+						<N8nLink to="https://wufflyne.com">Unlimited fork by wufflyne.com</N8nLink>
+					</ElCol>
+				</ElRow>
+				<ElRow>
+					<ElCol :span="8" class="info-name">
 						<N8nText>{{ i18n.baseText('about.license') }}</N8nText>
 					</ElCol>
 					<ElCol :span="16">

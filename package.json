@@ -2,6 +2,8 @@
   "name": "n8n-monorepo",
   "version": "2.45.0",
   "private": true,
+  "author": "wufflyne (https://wufflyne.com)",
+  "homepage": "https://wufflyne.com",
   "engines": {
     "node": ">=24.0.0",
     "pnpm": ">=12.4.2"

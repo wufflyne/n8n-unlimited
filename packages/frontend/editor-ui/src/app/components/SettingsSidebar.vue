@@ -45,6 +45,9 @@ onMounted(() => {
 			<N8nLink size="small" @click="uiStore.openModal(ABOUT_MODAL_KEY)">
 				{{ i18n.baseText('settings.version') }} {{ rootStore.versionCli }}
 			</N8nLink>
+			<div :class="$style.forkNote">
+				<N8nLink size="small" to="https://wufflyne.com">Unlimited fork by wufflyne.com</N8nLink>
+			</div>
 		</div>
 	</div>
 </template>
@@ -89,6 +92,10 @@ onMounted(() => {
 
 .versionContainer {
 	padding: var(--spacing--xs);
+}
+
+.forkNote {
+	margin-top: var(--spacing--5xs);
 }
 
 @media screen and (max-height: 420px) {
