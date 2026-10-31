@@ -34,9 +34,13 @@ Everything that runs locally, from day one:
 
 Free cloud conveniences that still work because they're genuinely useful and optional: workflow templates and the community node registry.
 
-## Quick start with Docker
+## Quick start
 
-You need an image first — either build it (see below) or load one you built elsewhere. Then:
+Two ways to get running: pull the ready-made image (fast, no toolchain needed) or build it yourself from this repo (full control, works with Podman too).
+
+### Option 1 — the prebuilt image
+
+The image lives on Docker Hub as [`wufflyne/n8n-unlimited`](https://hub.docker.com/r/wufflyne/n8n-unlimited), tagged `stable` (tracks the latest release), `latest`, and the version it's based on (`26.7.0`). `amd64` only.
 
 ```bash
 mkdir n8n && cd n8n
@@ -44,7 +48,7 @@ mkdir n8n && cd n8n
 cat > docker-compose.yml <<'EOF'
 services:
   n8n:
-    image: n8nio/n8n:local
+    image: wufflyne/n8n-unlimited:stable
     restart: unless-stopped
     ports:
       - "5678:5678"
@@ -62,6 +66,21 @@ docker compose up -d
 ```
 
 Open `http://<server-ip>:5678`, create the owner account, and you're running — everything is already unlocked.
+
+To run it without compose:
+
+```bash
+docker volume create n8n_data
+docker run -d --name n8n -p 5678:5678 \
+  -e N8N_SECURE_COOKIE=false \
+  -e N8N_ENCRYPTION_KEY=change-me-to-a-long-random-string \
+  -v n8n_data:/home/node/.n8n \
+  wufflyne/n8n-unlimited:stable
+```
+
+### Option 2 — build it yourself
+
+Everything below assumes you're building; skip to the env table if you pulled the image.
 
 ### Environment variables worth setting
 
@@ -94,7 +113,7 @@ docker run --rm -v n8n_data:/data -v $(pwd):/backup alpine \
   tar czf /backup/n8n-data-$(date +%F).tar.gz -C /data .
 ```
 
-To upgrade: back up, build the new image, `docker compose up -d` again. Since this is a fork (not upstream tracking), pull this repo and rebuild rather than bumping an image tag. Check this repo's commits for anything I had to re-apply — the license changes live in `packages/cli/src/license.ts` and occasionally upstream moves something underneath them.
+To upgrade: back up, then `docker compose pull && docker compose up -d` — the `stable` tag tracks the latest release on Docker Hub. If you build from source instead, pull this repo and rebuild; check the commits for anything I had to re-apply — the license changes live in `packages/cli/src/license.ts` and occasionally upstream moves something underneath them.
 
 ## Troubleshooting
 
